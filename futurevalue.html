@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+
+    <head>
+
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+
+        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+
+        <link rel="stylesheet" href="css/normalize.css">
+        <link rel="stylesheet" href="css/main.css">
+        <script src="js/vendor/modernizr-2.6.2.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        
+    </head>
+
+    <body>
+
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+      <fieldset>
+		  <legend>Future Value</legend>
+		  <ul>
+			<li>
+			  <label for="presentValue">Present Value:</label>
+			  <input id="presentValue" name="presentValue" value="3.85" type=text placeholder="Present Value">
+		    </li>		  
+			<li>
+			  <label for="growthRate">Compounded Annual Growth Rate:</label>
+			  <input id="growthRate" name="growthRate" value="9.18" type=text placeholder="CAGR">
+		    </li>
+			<li>
+			  <label for="numberYears">Number of Years:</label>
+			  <input id="numberYears" name="numberYears" value="10" type=text placeholder="# Years">
+		    </li>
+			<li>
+			  <!-- blank line -->&nbsp;
+		    </li>		    
+			<li>
+			  <button id="doCalc">Do Calculation</button>
+		    </li>	
+			<li>
+			  <span id="output"></span>
+		    </li>			    
+		  </ul>
+		</fieldset>		
+
+        <script>
+        
+        $(document).ready(function() {
+          $("#doCalc").click(function() {
+            doCalc();
+          });         
+        });
+        
+        function getInputs() {
+        
+          var presentValue = $("#presentValue").val();
+    
+          var growthRate = $("#growthRate").val();
+          
+          var numYears = $("#numberYears").val();   
+          
+          var inputs = { presentValue : presentValue
+                       , growthRate : growthRate
+                       , numYears : numYears
+                       };
+                       
+          return inputs;
+        
+        }
+        
+        function doCalc() {
+    
+    	  var inputs = getInputs();
+    	  
+          var output = doFutureValueCalc(inputs);       
+          
+  		  var outputArea = $("#output"); 
+  		  
+  		  var outputText = "<br/>";
+  		  outputText += "<strong>Results:</strong> <br/>";
+  		  outputText += "Future Value = " + output["futureValue"] + "<br/>";
+  		  outputText += "<br/>";
+  		  outputText += "<strong>Inputs:</strong> <br/>";
+  		  outputText += "Present Value = " + output["presentValue"] + "<br/>";
+  		  outputText += "Compounded Annual Growth Rate = " + output["growthRate"] + "% <br/>";
+  		  outputText += "Number of Years = " + output["numYears"] + "<br/>";
+  		  
+  		  outputArea.html(outputText);          
+  		  
+  		}
+        
+        function doFutureValueCalc(inputs) {
+        
+          var presentValue = inputs["presentValue"];
+    
+          var growthRate = inputs["growthRate"];
+          
+          var numYears = inputs["numYears"];
+          
+		  growthRate = growthRate / 100;  		  
+            
+          var futureValue = getFutureValue(presentValue, growthRate, numYears);   
+          
+          growthRate = growthRate * 100;
+               
+		  var output = { futureValue : futureValue 
+		  			   , presentValue : presentValue
+		  			   , growthRate : growthRate
+		  			   , numYears : numYears
+		  			   }; 
+		  			   
+		  return output;  			   
+  
+        }
+        
+        function getFutureValue(presentValue, rate, numYears) {
+        
+          // calculate the futureValue 
+          
+          var futureValue = presentValue * Math.pow(( 1 + rate ), numYears);
+          
+          // round up two decimal places
+          
+          futureValue = roundTwo(futureValue);        
+        	
+          return futureValue;          
+        
+        }
+        
+        function roundTwo(value) {
+        
+          // round up two decimal places
+          
+          value = Math.round( value * 100 ) / 100;             
+        
+          return value;
+          
+        }
+        
+        </script>
+
+    </body>
+</html>
