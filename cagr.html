@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+ 
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+
+        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+
+        <link rel="stylesheet" href="css/normalize.css">
+        <link rel="stylesheet" href="css/main.css">
+        <script src="js/vendor/modernizr-2.6.2.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        
+        <style>
+        ul {
+          list-style-type: none;
+        }
+        </style>
+        
+    </head>
+
+    <body>
+
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+      <fieldset>
+		  <legend>Compounded Growth Rate Calculation</legend>
+		  <ul>
+			<li>
+			  <label for="numberYears">Number of Years:</label>
+			  <input id="numberYears" name="numberYears" value="10" type=text placeholder="# Years">
+		    </li>
+			<li>
+			  <label for="epsFirstYear">First EPS:</label>
+			  <input id="epsFirstYear" name="epsFirstYear" value="1.60" type=text placeholder="EPS First Year">
+		    </li>	
+			<li>
+			  <label for="epsLastYear">Last EPS:</label>
+			  <input id="epsLastYear" name="epsLastYear" value="3.85" type=text placeholder="EPS Last Year">
+		    </li>	 
+			<li>
+			  &nbsp; <!-- blank line -->
+		  </li>		    
+			<li>
+			  <button id="doCalc">Do Calculation</button>
+		    </li>
+			<li>
+			  <span id="output"></span>
+		    </li>		    
+		  </ol>
+		</fieldset>	
+
+    <script>
+
+        $(document).ready(function() {
+          $("#doCalc").click(function() {
+            doCalc();
+          });        
+        });
+        
+        function getInputs() {
+        
+          var startValue = $("#epsFirstYear").val();
+          var endValue = $("#epsLastYear").val();
+          
+          var numYears = $("#numberYears").val();   
+          
+          var inputs = { startValue : startValue
+                       , endValue : endValue
+                       , numYears : numYears
+                       };
+                       
+          return inputs;
+        
+        }
+        
+        function doCalc() {
+    
+    	    var inputs = getInputs();
+    	  
+          var output = doCagrCalc(inputs);              
+  		  
+  		    var outputArea = $("#output"); 
+  		  
+  		    var outputText = "<br/>";
+  		    outputText += "<strong>Results:</strong> <br/>";
+  		    outputText += "CAGR = " + output["CAGR"] + "% <br/>";
+  		    outputText += "<br/>";
+  		    outputText += "<strong>Inputs:</strong> <br/>";
+  		    outputText += "First EPS = " + output["startValue"] + "<br/>";
+  		    outputText += "Last EPS = " + output["endValue"] + "<br/>";
+  		    outputText += "Number of Years = " + output["numYears"] + "<br/>";
+  		  
+  		    outputArea.html(outputText);
+  		  
+  		  }
+        
+        function doCagrCalc(inputs) {
+        
+          var startValue = inputs["startValue"];
+          var endValue = inputs["endValue"];
+          
+          var numYears = inputs["numYears"];
+
+          var cagr = getCAGR(startValue, endValue, numYears);
+        
+          /*
+          alert( ' CAGR = ' + cagr + ' %' 
+               + '\n startValue = ' + '$' + startValue 
+               + '\n endValue = ' + '$' + endValue 
+               + '\n numYears = ' + numYears); 
+		      */
+		
+		      var output = { CAGR : cagr 
+		  			           , startValue : startValue
+		  			           , endValue : endValue
+		  			           , numYears : numYears
+		  			           };
+
+		      return output;
+		  
+        }
+        
+        function getCAGR(startValue, endValue, numYears) {
+        
+          // calculate compounding annual rate of return
+		      // using the following formula:
+		      //
+		      // CAGR = ( (endValue/startValue)^(1/numYears) ) - 1	
+
+          var value = endValue / startValue;
+          
+    	    value = ( Math.pow( value, 1/numYears ) - 1 ) * 100;
+        
+          // round up two decimal places
+          
+          value = roundTwo(value);      
+        	
+          return value;
+          
+        }
+        
+        function roundTwo(value) {
+        
+          // round up two decimal places
+          
+          value = Math.round( value * 100 ) / 100;             
+        
+          return value;
+          
+        }
+            
+    </script>
+
+    </body>
+
+</html>
