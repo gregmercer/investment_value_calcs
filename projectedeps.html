@@ -33,27 +33,27 @@
             <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
         <![endif]-->
 
-      <fieldset>
+	    <fieldset>
 		  <legend>Calculate Investment Return based on past EPS growth</legend>
 		  <ul>
 			<li>
-			  <label for="startYear">Starting Year:</label>
-			  <input id="startYear" name="startYear" value="2001" type=text placeholder="Start Year">
+			  <label for="baseYear">Base Year:</label>
+			  <input id="baseYear" name="baseYear" value="2001" type=text placeholder="Base Year">
 		    </li>
 			<li>
-			  <label for="numberYears">Number of Years:</label>
-			  <input id="numberYears" name="numberYears" value="10" type=text placeholder="# Years">
-		    </li>
+			  <label for="currentYear">Current Year:</label>
+			  <input id="currentYear" name="currentYear" value="2011" type=text placeholder="Current Year">
+		    </li>		    
 			<li>
 			  <!-- blank line -->&nbsp;
 		    </li>			    
 			<li>
-			  <label for="epsFirstYear">EPS First Year:</label>
-			  <input id="epsFirstYear" name="epsFirstYear" value="1.60" type=text placeholder="EPS First Year">
+			  <label for="epsFirstYear">EPS Base Year:</label>
+			  <input id="epsFirstYear" name="epsFirstYear" value="1.60" type=text placeholder="EPS Base Year">
 		    </li>	
 			<li>
-			  <label for="epsLastYear">EPS Last Year:</label>
-			  <input id="epsLastYear" name="epsLastYear" value="3.85" type=text placeholder="EPS Last Year">
+			  <label for="epsLastYear">EPS Current Year:</label>
+			  <input id="epsLastYear" name="epsLastYear" value="3.85" type=text placeholder="EPS Current Year">
 		    </li>
 			<li>
 			  <!-- blank line -->&nbsp;
@@ -91,14 +91,13 @@
         
         function getInputs() {
         
-          var startYear = $("#startYear").val();
+          var baseYear = $("#baseYear").val();
+          var currentYear = $("#currentYear").val();
           
           var currentSharePrice = $("#currentSharePrice").val();
     
           var startValue = $("#epsFirstYear").val();
           var endValue = $("#epsLastYear").val();
-          
-          var numYears = $("#numberYears").val();
           
           var lowestPE = $("#lowestPE").val();
 
@@ -106,11 +105,11 @@
           
           var futureRate = null;     
           
-          var inputs = { startYear : startYear
+          var inputs = { baseYear : baseYear
+                       , currentYear : currentYear
                        , currentSharePrice : currentSharePrice
                        , startValue : startValue
                        , endValue : endValue
-                       , numYears : numYears
                        , lowestPE : lowestPE
                        , dividendPerShare : dividendPerShare
                        , futureRate : futureRate
@@ -133,14 +132,15 @@
         
         function doCalc(inputs) {
          
-          var startYear = inputs["startYear"];
+          var baseYear = inputs["baseYear"];
+          var currentYear = inputs["currentYear"];
           
           var currentSharePrice = inputs["currentSharePrice"];
     
           var startValue = inputs["startValue"];
           var endValue = inputs["endValue"];
           
-          var numYears = inputs["numYears"];
+          var numYears = parseInt(currentYear) - parseInt(baseYear);
           
           var lowestPE = inputs["lowestPE"];
 
@@ -148,18 +148,21 @@
           
           var futureRate = inputs["futureRate"]; 
           
+          var futureYear = parseInt(currentYear) + parseInt(numYears); 
+          
           var outputText = "";
           
           outputText += "<br/>";  
   		  outputText += "<strong>Inputs:</strong> <br/>";
   		  outputText += "<br/>";  
 
-  		  outputText += "Starting Year = " + startYear + "<br/>";
+  		  outputText += "Base Year = " + baseYear + "<br/>";
+   		  outputText += "Current Year = " + currentYear + "<br/>";
   		  outputText += "Number of Years = " + numYears + "<br/>"; 
   		  
   		  outputText += "<br/>";
-  		  outputText += "EPS First Year = $" + startValue + "<br/>";
-  		  outputText += "EPS Last Year = $" + endValue + "<br/>";
+  		  outputText += "EPS Year " + baseYear + " = $" + startValue + "<br/>";
+  		  outputText += "EPS Year " + currentYear + " = $" + endValue + "<br/>";
   		  
   		  outputText += "<br/>";
   		  outputText += "Current Share Price = $" + currentSharePrice + "<br/>"; 
@@ -184,12 +187,10 @@
             
           var futureValue = getFutureValue(endValue, futureRate, numYears);   
           
-          futureRate = futureRate * 100;
-                             
-          var endYear = parseInt(startYear) + parseInt(numYears);                   
+          futureRate = futureRate * 100;                   
                              
           outputText += "<br/>";               
-          outputText += "<strong>Projected Results for Year " + endYear + "</strong><br/>";
+          outputText += "<strong>Projected Results for Year " + futureYear + "</strong><br/>";
   		  outputText += "&nbsp; EPS = $" + futureValue + "<br/>";
   
           var projectedSharePrice = projectSharePrice(futureValue, lowestPE);      
@@ -198,7 +199,7 @@
                
           projectedSharePrice = addProjectDividend(projectedSharePrice, dividendPerShare, numYears); 
           
-          outputText += "&nbsp; Total per Share Return w/ Dividends = $" + projectedSharePrice + "<br/>";  
+          outputText += "&nbsp; Total per Share Value w/ Dividends = $" + projectedSharePrice + "<br/>";  
           
           var investmentReturn = getCAGR(currentSharePrice, projectedSharePrice, numYears); 
                
